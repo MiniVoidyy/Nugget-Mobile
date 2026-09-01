@@ -41,10 +41,15 @@ jobs:
           sudo installer -pkg /tmp/swift.pkg -target /
           TC="$(ls -d /Library/Developer/Toolchains/*.xctoolchain | head -n1)"
           echo "Toolchain: $TC"
-          SWIFT_RES="$TC/usr/lib/swift/clang/include"
+          SWIFT_INC="$TC/usr/lib/swift/clang/include"
           CLANG_INC="$(ls -d "$TC"/usr/lib/clang/*/include | head -n1)"
-          echo "Merging $CLANG_INC into $SWIFT_RES"
-          sudo cp -Rn "$CLANG_INC"/. "$SWIFT_RES"/
+          if [ "$SWIFT_INC" != "$CLANG_INC" ]; then
+            sudo cp -Rn "$CLANG_INC"/. "$SWIFT_INC"/ || true
+          fi
+          XCODE_INC="$(ls -d "$(xcode-select -p)"/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/*/include | head -n1)"
+          echo "Merging missing headers from $XCODE_INC"
+          sudo cp -Rn "$XCODE_INC"/. "$SWIFT_INC"/ || true
+          ls "$SWIFT_INC" | grep -i stdalign
 
       - name: Build
         run: |
