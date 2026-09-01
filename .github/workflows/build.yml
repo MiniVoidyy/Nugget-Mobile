@@ -43,12 +43,7 @@ jobs:
           echo "Toolchain: $TC"
           SWIFT_INC="$TC/usr/lib/swift/clang/include"
           echo "Writing __stddef_max_align_t.h into $SWIFT_INC"
-          sudo tee "$SWIFT_INC/__stddef_max_align_t.h" >/dev/null <<'EOF'
-#ifndef __stddef_max_align_t_h
-#define __stddef_max_align_t_h
-typedef long double max_align_t;
-#endif
-EOF
+          printf '#ifndef __stddef_max_align_t_h\n#define __stddef_max_align_t_h\ntypedef long double max_align_t;\n#endif\n' | sudo tee "$SWIFT_INC/__stddef_max_align_t.h" >/dev/null
           ls -l "$SWIFT_INC/__stddef_max_align_t.h"
 
       - name: Build
