@@ -46,6 +46,9 @@
 		6F8594D22C99D6CC00F790D1 /* RevertTweaksPopoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F8594D12C99D6CC00F790D1 /* RevertTweaksPopoverView.swift */; };
 		6F8594D42C9A006800F790D1 /* ModifyTweakViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F8594D32C9A006800F790D1 /* ModifyTweakViewModifier.swift */; };
 		6F8594D92C9C9F6E00F790D1 /* HelperFuncs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F8594D82C9C9F6E00F790D1 /* HelperFuncs.swift */; };
+		7AC00A012C9E0A0000DAE00A /* DaemonsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AC00A022C9E0A0000DAE00A /* DaemonsManager.swift */; };
+		7AC00A032C9E0A0000DAE00A /* DaemonsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AC00A042C9E0A0000DAE00A /* DaemonsView.swift */; };
+		7AC00A052C9E0A0000DAE00A /* daemons.json in Resources */ = {isa = PBXBuildFile; fileRef = 7AC00A062C9E0A0000DAE00A /* daemons.json */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -95,6 +98,9 @@
 		6F8594D12C99D6CC00F790D1 /* RevertTweaksPopoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RevertTweaksPopoverView.swift; sourceTree = "<group>"; };
 		6F8594D32C9A006800F790D1 /* ModifyTweakViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModifyTweakViewModifier.swift; sourceTree = "<group>"; };
 		6F8594D82C9C9F6E00F790D1 /* HelperFuncs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelperFuncs.swift; sourceTree = "<group>"; };
+		7AC00A022C9E0A0000DAE00A /* DaemonsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DaemonsManager.swift; sourceTree = "<group>"; };
+		7AC00A042C9E0A0000DAE00A /* DaemonsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DaemonsView.swift; sourceTree = "<group>"; };
+		7AC00A062C9E0A0000DAE00A /* daemons.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = daemons.json; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -113,6 +119,7 @@
 			children = (
 				6F2A99772C9E0C1E00C8A862 /* eligibility.plist */,
 				6F2A99792C9E18DE00C8A862 /* Config.plist */,
+				7AC00A062C9E0A0000DAE00A /* daemons.json */,
 			);
 			path = Files;
 			sourceTree = "<group>";
@@ -189,6 +196,7 @@
 				6F8594C12C94DED800F790D1 /* SpringboardTweaksView.swift */,
 				6F8594C32C9507C400F790D1 /* InternalOptionsView.swift */,
 				6F8593B62C8FAA8700F790D1 /* StatusBarView.swift */,
+				7AC00A042C9E0A0000DAE00A /* DaemonsView.swift */,
 			);
 			path = Tweaks;
 			sourceTree = "<group>";
@@ -236,6 +244,7 @@
 				6F8593B22C8F91C900F790D1 /* FeatureFlagManager.swift */,
 				6F8594AB2C8FADF300F790D1 /* StatusManagerSwift.swift */,
 				6F2A99732C9E0AEF00C8A862 /* EligibilityManager.swift */,
+				7AC00A022C9E0A0000DAE00A /* DaemonsManager.swift */,
 			);
 			path = Tweaks;
 			sourceTree = "<group>";
@@ -341,6 +350,7 @@
 			files = (
 				6F2A997A2C9E18DE00C8A862 /* Config.plist in Resources */,
 				6F2A99782C9E0C1E00C8A862 /* eligibility.plist in Resources */,
+				7AC00A052C9E0A0000DAE00A /* daemons.json in Resources */,
 				6F85935C2C8F41E100F790D1 /* Preview Assets.xcassets in Resources */,
 				6F8593592C8F41E100F790D1 /* Assets.xcassets in Resources */,
 			);
@@ -388,6 +398,8 @@
 				6F85937A2C8F4C7000F790D1 /* MobileGestaltManager.swift in Sources */,
 				6F8594D92C9C9F6E00F790D1 /* HelperFuncs.swift in Sources */,
 				6F8593732C8F443A00F790D1 /* MaterialView.swift in Sources */,
+				7AC00A012C9E0A0000DAE00A /* DaemonsManager.swift in Sources */,
+				7AC00A032C9E0A0000DAE00A /* DaemonsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -44,6 +44,17 @@ Your device should reboot. After it reboots, try Nugget mobile now. If it still 
 If the steps above don't work for you, try using `Cowabunga Lite` and clicking the `Deep Clean` button, then try the steps again.
 If not even that works, the only solution I know is to wipe the device (not ideal). I would recommend using [Nugget Python](https://github.com/leminlimez/Nugget) instead in this case.
 
+## Daemons
+A new **Daemons** tool is available under Tools. It mirrors the GoldenNugget (desktop) daemons page:
+
+- Every daemon toggle carries its own short description.
+- **Recommended** toggles the curated set of telemetry, analytics, and logging daemons in one tap.
+- **Analytics, Data Tracking & Logging** is the combined selectable section (same as the desktop app).
+- Disabled daemons are written to `/var/db/com.apple.xpc.launchd/disabled.plist` on Apply and cleared on "Remove All Tweaks".
+
+The catalog lives in `Nugget/Files/daemons.json` and is generated from the desktop app's
+`src/tweaks/daemons_tweak.py` via `Scripts/export_daemons_json.py` (set `GOLDENNUGGET_SRC` to the GoldenNugget repo root).
+
 ## Credits
 - [JJTech](https://github.com/JJTech0130) for Sparserestore/[TrollRestore](https://github.com/JJTech0130/TrollRestore)
 - khanhduytran for [Sparsebox](https://github.com/khanhduytran0/SparseBox)

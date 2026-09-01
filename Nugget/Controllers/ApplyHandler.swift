@@ -14,6 +14,7 @@ enum TweakPage: String, CaseIterable {
     case StatusBar = "Status Bar"
     case SpringBoard = "SpringBoard"
     case Internal = "Internal Options"
+    case Daemons = "Daemons"
     case SkipSetup = "Skip Setup"
 }
 
@@ -24,10 +25,11 @@ class ApplyHandler: ObservableObject {
     let ffManager = FeatureFlagManager.shared
     let eligibilityManager = EligibilityManager.shared
     let statusManager = StatusManagerSwift.shared
+    let daemonsManager = DaemonsManager.shared
     
     @Published var enabledTweaks: Set<TweakPage> = []
     @Published var removingTweaks: Set<TweakPage> = [
-        .MobileGestalt, .FeatureFlags, .SpringBoard, .Internal
+        .MobileGestalt, .FeatureFlags, .SpringBoard, .Internal, .Daemons
     ]
     
     @Published var trollstore: Bool = false
@@ -87,6 +89,9 @@ class ApplyHandler: ObservableObject {
             for file_path in basicPlistTweaksData.keys {
                 files.append(FileToRestore(contents: basicPlistTweaksData[file_path]!, path: file_path.rawValue))
             }
+        case .Daemons:
+            // Apply the launchd disabled.plist
+            files.append(FileToRestore(contents: resetting ? daemonsManager.reset() : daemonsManager.apply(), path: "/var/db/com.apple.xpc.launchd/disabled.plist", owner: 0, group: 0))
         case .SkipSetup:
             // Apply the skip setup file
             var cloudConfigData: Data = Data()
