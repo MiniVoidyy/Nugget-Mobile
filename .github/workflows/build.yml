@@ -37,8 +37,9 @@ jobs:
       - name: Install Swift 5.8.1 toolchain
         run: |
           set -e
-          mkdir -p "$HOME/Library/Developer/Toolchains" /tmp/swiftpkg
+          mkdir -p "$HOME/Library/Developer/Toolchains"
           curl -fL --retry 3 -o /tmp/swift.pkg https://download.swift.org/swift-5.8.1-release/xcode/swift-5.8.1-RELEASE/swift-5.8.1-RELEASE-osx.pkg
+          rm -rf /tmp/swiftpkg
           pkgutil --expand-full /tmp/swift.pkg /tmp/swiftpkg
           TC="$(find /tmp/swiftpkg -type d -name '*.xctoolchain' | head -n 1)"
           cp -R "$TC" "$HOME/Library/Developer/Toolchains/"
