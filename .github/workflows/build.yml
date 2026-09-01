@@ -42,14 +42,14 @@ jobs:
           TC="$(ls -d /Library/Developer/Toolchains/*.xctoolchain | head -n1)"
           echo "Toolchain: $TC"
           SWIFT_INC="$TC/usr/lib/swift/clang/include"
-          CLANG_INC="$(ls -d "$TC"/usr/lib/clang/*/include | head -n1)"
-          if [ "$SWIFT_INC" != "$CLANG_INC" ]; then
-            sudo cp -Rn "$CLANG_INC"/. "$SWIFT_INC"/ || true
-          fi
-          XCODE_INC="$(ls -d "$(xcode-select -p)"/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/*/include | head -n1)"
-          echo "Merging missing headers from $XCODE_INC"
-          sudo cp -Rn "$XCODE_INC"/. "$SWIFT_INC"/ || true
-          ls "$SWIFT_INC" | grep -i stdalign
+          echo "Writing __stddef_max_align_t.h into $SWIFT_INC"
+          sudo tee "$SWIFT_INC/__stddef_max_align_t.h" >/dev/null <<'EOF'
+#ifndef __stddef_max_align_t_h
+#define __stddef_max_align_t_h
+typedef long double max_align_t;
+#endif
+EOF
+          ls -l "$SWIFT_INC/__stddef_max_align_t.h"
 
       - name: Build
         run: |
