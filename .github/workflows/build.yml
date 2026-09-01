@@ -42,9 +42,9 @@ jobs:
           TC="$(ls -d /Library/Developer/Toolchains/*.xctoolchain | head -n1)"
           echo "Toolchain: $TC"
           SWIFT_INC="$TC/usr/lib/swift/clang/include"
-          echo "Writing __stddef_max_align_t.h into $SWIFT_INC"
-          printf '#ifndef __stddef_max_align_t_h\n#define __stddef_max_align_t_h\ntypedef long double max_align_t;\n#endif\n' | sudo tee "$SWIFT_INC/__stddef_max_align_t.h" >/dev/null
-          ls -l "$SWIFT_INC/__stddef_max_align_t.h"
+          echo "Patching $SWIFT_INC/stddef.h (clang 13 lacks __stddef_max_align_t.h)"
+          sudo perl -0pi -e 's{#include "__stddef_max_align_t.h"}{typedef long double max_align_t;}' "$SWIFT_INC/stddef.h"
+          grep -n "max_align_t" "$SWIFT_INC/stddef.h" | tail -n 3
 
       - name: Build
         run: |
