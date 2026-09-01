@@ -39,7 +39,12 @@ jobs:
           set -e
           curl -fL --retry 3 -o /tmp/swift.pkg https://download.swift.org/swift-5.8.1-release/xcode/swift-5.8.1-RELEASE/swift-5.8.1-RELEASE-osx.pkg
           sudo installer -pkg /tmp/swift.pkg -target /
-          ls -d /Library/Developer/Toolchains/*.xctoolchain
+          TC="$(ls -d /Library/Developer/Toolchains/*.xctoolchain | head -n1)"
+          echo "Toolchain: $TC"
+          SWIFT_RES="$TC/usr/lib/swift/clang/include"
+          CLANG_INC="$(ls -d "$TC"/usr/lib/clang/*/include | head -n1)"
+          echo "Merging $CLANG_INC into $SWIFT_RES"
+          sudo cp -Rn "$CLANG_INC"/. "$SWIFT_RES"/
 
       - name: Build
         run: |
