@@ -52,6 +52,7 @@ if [ -d $BUILD_LOCATION ]; then
     cp -r $APP_BUILD_FILES/*.png $BUILD_LOCATION
     cp -r $APP_BUILD_FILES/*.plist $BUILD_LOCATION
     cp -r "$APP_BUILD_FILES/Assets.car" "$BUILD_LOCATION/Assets.car"
+    cp -r "$APP_BUILD_FILES/daemons.json" "$BUILD_LOCATION/daemons.json"
     
     # Add the frameworks
     echo "Adding framework files"
