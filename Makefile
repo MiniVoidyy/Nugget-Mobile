@@ -24,7 +24,6 @@ libimobiledevice_LDFLAGS = \
   -force_load lib/libcrypto.a \
   -force_load lib/libssl.a \
   -force_load lib/libminimuxer-ios.a \
-  -Wl,-mllvm,--opaque-pointers \
   -install_name @rpath/libimobiledevice.dylib
 libimobiledevice_FRAMEWORKS = Foundation Security SystemConfiguration
 libimobiledevice_INSTALL_PATH = /Applications/$(APPLICATION_NAME).app/Frameworks
