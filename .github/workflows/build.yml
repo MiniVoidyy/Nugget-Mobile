@@ -37,17 +37,15 @@ jobs:
       - name: Install Swift 5.8.1 toolchain
         run: |
           set -e
-          mkdir -p "$HOME/Library/Developer/Toolchains"
           curl -fL --retry 3 -o /tmp/swift.pkg https://download.swift.org/swift-5.8.1-release/xcode/swift-5.8.1-RELEASE/swift-5.8.1-RELEASE-osx.pkg
-          rm -rf /tmp/swiftpkg
-          pkgutil --expand-full /tmp/swift.pkg /tmp/swiftpkg
-          TC="$(find /tmp/swiftpkg -type d -name '*.xctoolchain' | head -n 1)"
-          cp -R "$TC" "$HOME/Library/Developer/Toolchains/"
+          sudo installer -pkg /tmp/swift.pkg -target /
+          ls -d /Library/Developer/Toolchains/*.xctoolchain
 
       - name: Build
         run: |
           export THEOS=theos
-          export TARGET_SWIFTC="$HOME/Library/Developer/Toolchains/swift-5.8.1-RELEASE.xctoolchain/usr/bin/swiftc"
+          export TARGET_SWIFTC="$(ls -d /Library/Developer/Toolchains/*.xctoolchain | head -n1)/usr/bin/swiftc"
+          "$TARGET_SWIFTC" --version
 
           git submodule update --init
           bash get_libraries.sh
