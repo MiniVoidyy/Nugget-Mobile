@@ -10,7 +10,6 @@ import SwiftUI
 
 struct DaemonsView: View {
     @StateObject var manager = DaemonsManager.shared
-    @StateObject var applyHandler = ApplyHandler.shared
     @State private var search = ""
 
     var body: some View {
@@ -40,12 +39,7 @@ struct DaemonsView: View {
 
         GNSwitchRow(
             title: "Enable Daemon Modifications",
-            isOn: Binding(
-                get: { applyHandler.isTweakEnabled(.Daemons) },
-                set: { on in
-                    applyHandler.setTweakEnabled(.Daemons, isEnabled: on)
-                }
-            )
+            isOn: $manager.masterEnabled
         )
 
         HStack {
@@ -175,11 +169,11 @@ struct DaemonsView: View {
     // MARK: Derived data
 
     private var masterEnabled: Bool {
-        applyHandler.isTweakEnabled(.Daemons)
+        manager.masterEnabled
     }
 
     private func masterOn() {
-        applyHandler.setTweakEnabled(.Daemons, isEnabled: true)
+        manager.masterEnabled = true
     }
 
     private var adlDaemons: [DaemonDef] {

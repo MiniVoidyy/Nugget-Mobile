@@ -54,6 +54,15 @@ class DaemonsManager: ObservableObject {
     /// Set of launchd labels currently marked as disabled (`true`).
     @Published var enabledLabels: Set<String> = []
 
+    /// Whether daemon modifications are gated on (the master switch). Persisted
+    /// across launches so the enable state survives a restart.
+    @Published var masterEnabled: Bool = false {
+        didSet {
+            UserDefaults.standard.set(masterEnabled, forKey: "DaemonMasterEnabled")
+            ApplyHandler.shared.setTweakEnabled(.Daemons, isEnabled: masterEnabled)
+        }
+    }
+
     let catalog: DaemonCatalog = DaemonsManager.loadCatalog()
 
     private static func loadCatalog() -> DaemonCatalog {
@@ -70,11 +79,13 @@ class DaemonsManager: ObservableObject {
     init() {
         // Persist selection across app launches
         enabledLabels = Set(UserDefaults.standard.stringArray(forKey: "DaemonDisabledLabels") ?? [])
+        masterEnabled = UserDefaults.standard.bool(forKey: "DaemonMasterEnabled")
     }
 
     func setEnabled(_ daemon: DaemonDef, _ on: Bool) {
         if on {
             enabledLabels.formUnion(daemon.labels)
+            masterEnabled = true
         } else {
             enabledLabels.subtract(daemon.labels)
         }
@@ -88,6 +99,9 @@ class DaemonsManager: ObservableObject {
             } else {
                 enabledLabels.subtract(daemon.labels)
             }
+        }
+        if on {
+            masterEnabled = true
         }
         UserDefaults.standard.set(Array(enabledLabels), forKey: "DaemonDisabledLabels")
     }
