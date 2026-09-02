@@ -114,6 +114,13 @@ class DaemonsManager: ObservableObject {
         return daemons.allSatisfy { isOn($0) }
     }
 
+    /// Number of daemons that are fully disabled (every label is enabled in the set).
+    var disabledDaemonCount: Int {
+        catalog.daemons.filter { daemon in
+            !daemon.labels.isEmpty && daemon.labels.allSatisfy { enabledLabels.contains($0) }
+        }.count
+    }
+
     func daemons(in category: DaemonCategory) -> [DaemonDef] {
         return catalog.daemons.filter { DaemonCategory(rawValue: $0.category) == category }
     }

@@ -45,7 +45,7 @@ struct DaemonsView: View {
         HStack {
             Image(systemName: "checkmark.circle.fill")
                 .foregroundColor(GNTheme.gold)
-            Text("\(manager.enabledLabels.count) of \(manager.catalog.daemons.count) disabled")
+            Text("\(manager.disabledDaemonCount) of \(manager.catalog.daemons.count) disabled")
                 .font(.system(size: 13))
                 .foregroundColor(GNTheme.secondaryText)
             Spacer()
@@ -75,7 +75,7 @@ struct DaemonsView: View {
 
         // Analytics, Data Tracking & Logging
         if !adlDaemons.isEmpty {
-            GNSectionHeader(title: "Analytics, Data Tracking & Logging")
+            GNSectionHeader(title: "Analytics, Data Tracking & Logging (\(adlDaemons.count))")
             GNSwitchRow(
                 title: "Select all analytics, tracking & logging daemons",
                 isOn: Binding(
@@ -94,16 +94,18 @@ struct DaemonsView: View {
 
         // Other
         if !otherDaemons.isEmpty {
-            GNSectionHeader(title: "Other")
+            GNSectionHeader(title: "Other (\(otherDaemons.count))")
             ForEach(otherDaemons) { daemon in
                 daemonRow(daemon)
             }
         }
 
         // Screen Time (dedicated section, matches PC)
-        if let screenTime = screenTimeDaemon {
+        if screenTimeDaemon != nil {
             GNSectionHeader(title: "Disable Screen Time Agent")
-            daemonRow(screenTime)
+            if let screenTime = screenTimeDaemon {
+                daemonRow(screenTime)
+            }
         }
     }
 
@@ -116,6 +118,7 @@ struct DaemonsView: View {
                 .frame(maxWidth: .infinity, alignment: .center)
                 .padding(.top, 40)
         } else {
+            GNSectionHeader(title: "Search Results (\(matchingDaemons.count))")
             ForEach(matchingDaemons) { daemon in
                 daemonRow(daemon)
             }
