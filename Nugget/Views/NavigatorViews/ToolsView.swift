@@ -55,7 +55,7 @@ struct ToolsView: View {
                                             .resizable()
                                             .aspectRatio(contentMode: .fit)
                                             .frame(width: 24, height: 24)
-                                            .foregroundColor(.blue)
+                                            .foregroundColor(GNTheme.gold)
                                         Text(option.title.wrappedValue)
                                             .padding(.horizontal, 8)
                                         if applyHandler.isTweakEnabled(option.page.wrappedValue) {

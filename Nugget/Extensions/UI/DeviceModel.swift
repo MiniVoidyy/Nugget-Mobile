@@ -123,6 +123,17 @@ AppleTV3_4K        = "Apple TV 4K 3gen",
 unrecognized       = "?unrecognized?"
 }
 
+public extension Model {
+    var isiPhone14: Bool {
+        switch self {
+        case .iPhone14, .iPhone14Plus, .iPhone14Pro, .iPhone14ProMax:
+            return true
+        default:
+            return false
+        }
+    }
+}
+
 // #-#-#-#-#-#-#-#-#-#-#-#-#
 // MARK: UIDevice extensions
 // #-#-#-#-#-#-#-#-#-#-#-#-#

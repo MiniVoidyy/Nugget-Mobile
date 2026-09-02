@@ -8,163 +8,201 @@
 
 import SwiftUI
 
-// MARK: - GoldenNugget palette (matches ios_theme.qss)
-
-enum GNColor {
-    static let background = Color(red: 0x1e / 255.0, green: 0x1e / 255.0, blue: 0x1e / 255.0)
-    static let card = Color(red: 0x1c / 255.0, green: 0x1c / 255.0, blue: 0x1e / 255.0)
-    static let hairline = Color(red: 0x3a / 255.0, green: 0x3a / 255.0, blue: 0x3c / 255.0)
-    static let primaryText = Color(red: 1.0, green: 1.0, blue: 1.0)
-    static let secondaryText = Color(red: 0x8e / 255.0, green: 0x8e / 255.0, blue: 0x93 / 255.0)
-    static let accent = Color(red: 0.0, green: 0x7a / 255.0, blue: 1.0)
-    static let toggleOn = Color(red: 0x30 / 255.0, green: 0xd1 / 255.0, blue: 0x58 / 255.0)
-    static let toggleOff = Color(red: 0x3a / 255.0, green: 0x3a / 255.0, blue: 0x3c / 255.0)
-    static let divider = Color(red: 0x38 / 255.0, green: 0x38 / 255.0, blue: 0x3a / 255.0)
-}
-
-// MARK: - iOS-style toggle (green when on)
-
-struct GNSwitch: View {
-    @Binding var isOn: Bool
-    var onColor: Color = GNColor.toggleOn
-
-    var body: some View {
-        Button {
-            withAnimation(.easeInOut(duration: 0.2)) {
-                isOn.toggle()
-            }
-        } label: {
-            ZStack(alignment: .leading) {
-                Capsule()
-                    .fill(isOn ? onColor : GNColor.toggleOff)
-                    .frame(width: 51, height: 31)
-                Circle()
-                    .fill(.white)
-                    .frame(width: 27, height: 27)
-                    .padding(.leading, isOn ? 22 : 2)
-            }
-            .animation(.easeInOut(duration: 0.2), value: isOn)
-        }
-        .buttonStyle(.plain)
-        .accessibilityLabel(isOn ? "On" : "Off")
-    }
-}
-
-// MARK: - Section header (iOS Settings style, uppercase gray)
-
-struct GNSectionHeader: View {
-    let title: String
-
-    var body: some View {
-        Text(title.uppercased())
-            .font(.system(size: 13, weight: .semibold))
-            .tracking(0.5)
-            .foregroundColor(GNColor.secondaryText)
-            .padding(.leading, 4)
-    }
-}
-
-// MARK: - Card row containing a switch + label
-
-struct GNSwitchRow: View {
-    let title: String
-    @Binding var isOn: Bool
-
-    var body: some View {
-        HStack(spacing: 12) {
-            Text(title)
-                .font(.system(size: 15))
-                .foregroundColor(GNColor.primaryText)
-            Spacer()
-            GNSwitch(isOn: $isOn)
-        }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 10)
-        .background(GNColor.card)
-        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-    }
-}
-
-// MARK: - Daemons view
-
 struct DaemonsView: View {
     @StateObject var manager = DaemonsManager.shared
     @StateObject var applyHandler = ApplyHandler.shared
+    @State private var search = ""
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 8) {
-                GNSectionHeader(title: "Daemons to Disable")
-
-                GNSwitchRow(
-                    title: "Enable Daemon Modifications",
-                    isOn: Binding(
-                        get: { applyHandler.isTweakEnabled(.Daemons) },
-                        set: { applyHandler.setTweakEnabled(.Daemons, isEnabled: $0) }
-                    )
-                )
-
-                recommendedRow()
-
-                GNSectionHeader(title: "Analytics, Data Tracking & Logging")
-                GNSwitchRow(
-                    title: "Select all analytics, tracking & logging daemons",
-                    isOn: Binding(
-                        get: { manager.isEnabled(adlDaemons) },
-                        set: { on in
-                            manager.setEnabled(adlDaemons, on)
-                            if on { applyHandler.setTweakEnabled(.Daemons, isEnabled: true) }
-                        }
-                    )
-                )
-                ForEach(adlDaemons) { daemon in
-                    GNSwitchRow(
-                        title: daemon.title,
-                        isOn: daemon.bind(on: manager, applyHandler: applyHandler)
-                    )
-                    .help(daemon.description)
+        VStack(spacing: 0) {
+            searchBar
+            ScrollView {
+                VStack(alignment: .leading, spacing: 8) {
+                    if search.isEmpty {
+                        headerSection
+                    } else {
+                        searchResults
+                    }
                 }
-
-                GNSectionHeader(title: "Other")
-                ForEach(otherDaemons) { daemon in
-                    GNSwitchRow(
-                        title: daemon.title,
-                        isOn: daemon.bind(on: manager, applyHandler: applyHandler)
-                    )
-                    .help(daemon.description)
-                }
+                .padding(16)
             }
-            .padding(16)
         }
-        .background(GNColor.background)
+        .background(GNTheme.background)
         .preferredColorScheme(.dark)
         .navigationTitle("Daemons")
     }
 
+    // MARK: Master switch + Recommended
+
+    @ViewBuilder
+    private var headerSection: some View {
+        GNSectionHeader(title: "Daemons to Disable")
+
+        GNSwitchRow(
+            title: "Enable Daemon Modifications",
+            isOn: Binding(
+                get: { applyHandler.isTweakEnabled(.Daemons) },
+                set: { on in
+                    applyHandler.setTweakEnabled(.Daemons, isEnabled: on)
+                }
+            )
+        )
+
+        if !manager.recommendedDaemons().isEmpty {
+            GNSwitchRow(
+                title: "Recommended",
+                subtitle: "Telemetry, analytics & tracking",
+                isOn: Binding(
+                    get: { manager.isEnabled(manager.recommendedDaemons()) },
+                    set: { on in
+                        manager.setEnabled(manager.recommendedDaemons(), on)
+                        if on { masterOn() }
+                    }
+                ),
+                enabled: masterEnabled
+            )
+        }
+
+        // Analytics, Data Tracking & Logging
+        if !adlDaemons.isEmpty {
+            GNSectionHeader(title: "Analytics, Data Tracking & Logging")
+            GNSwitchRow(
+                title: "Select all analytics, tracking & logging daemons",
+                isOn: Binding(
+                    get: { manager.isEnabled(adlDaemons) },
+                    set: { on in
+                        manager.setEnabled(adlDaemons, on)
+                        if on { masterOn() }
+                    }
+                ),
+                enabled: masterEnabled
+            )
+            ForEach(adlDaemons) { daemon in
+                daemonRow(daemon)
+            }
+        }
+
+        // Other
+        if !otherDaemons.isEmpty {
+            GNSectionHeader(title: "Other")
+            ForEach(otherDaemons) { daemon in
+                daemonRow(daemon)
+            }
+        }
+
+        // Screen Time (dedicated section, matches PC)
+        if let screenTime = screenTimeDaemon {
+            GNSectionHeader(title: "Disable Screen Time Agent")
+            daemonRow(screenTime)
+        }
+    }
+
+    @ViewBuilder
+    private var searchResults: some View {
+        if searchResults.isEmpty {
+            Text("No daemons match “\(search)”")
+                .font(.system(size: 15))
+                .foregroundColor(GNTheme.secondaryText)
+                .frame(maxWidth: .infinity, alignment: .center)
+                .padding(.top, 40)
+        } else {
+            ForEach(searchResults) { daemon in
+                daemonRow(daemon)
+            }
+        }
+    }
+
+    private var searchBar: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "magnifyingglass")
+                .foregroundColor(GNTheme.secondaryText)
+            TextField("Search daemons", text: $search)
+                .foregroundColor(GNTheme.primaryText)
+                .autocorrectionDisabled()
+            if !search.isEmpty {
+                Button {
+                    search = ""
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundColor(GNTheme.secondaryText)
+                }
+            }
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 10)
+        .background(GNTheme.card)
+        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .padding(.horizontal, 16)
+        .padding(.top, 12)
+        .padding(.bottom, 4)
+    }
+
+    private func daemonRow(_ daemon: DaemonDef) -> some View {
+        GNSwitchRow(
+            title: daemon.title,
+            subtitle: daemon.description,
+            isOn: Binding(
+                get: { manager.isOn(daemon) },
+                set: { on in
+                    manager.setEnabled(daemon, on)
+                    if on { masterOn() }
+                    if on, daemon.title.contains("Location") {
+                        locationWarning()
+                    }
+                }
+            ),
+            enabled: masterEnabled
+        )
+        .help(daemon.description)
+    }
+
+    // MARK: Derived data
+
+    private var masterEnabled: Bool {
+        applyHandler.isTweakEnabled(.Daemons)
+    }
+
+    private func masterOn() {
+        applyHandler.setTweakEnabled(.Daemons, isEnabled: true)
+    }
+
     private var adlDaemons: [DaemonDef] {
-        manager.adlDaemons().filter { !$0.title.lowercased().contains("screen time") }
+        manager.adlDaemons().filter { !isScreenTime($0) }
     }
 
     private var otherDaemons: [DaemonDef] {
         manager.daemons(in: .OTHER)
     }
 
-    @ViewBuilder
-    private func recommendedRow() -> some View {
-        let rec = manager.recommendedDaemons()
-        if !rec.isEmpty {
-            GNSwitchRow(
-                title: "Recommended",
-                isOn: Binding(
-                    get: { manager.isEnabled(rec) },
-                    set: { on in
-                        manager.setEnabled(rec, on)
-                        if on { applyHandler.setTweakEnabled(.Daemons, isEnabled: true) }
-                    }
-                )
+    private var screenTimeDaemon: DaemonDef? {
+        manager.catalog.daemons.first(where: { isScreenTime($0) })
+    }
+
+    private func isScreenTime(_ daemon: DaemonDef) -> Bool {
+        daemon.title.lowercased().contains("screen time")
+    }
+
+    private var searchResults: [DaemonDef] {
+        let q = search.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        guard !q.isEmpty else { return [] }
+        return manager.catalog.daemons.filter {
+            $0.title.lowercased().contains(q) ||
+            $0.description.lowercased().contains(q) ||
+            $0.name.lowercased().contains(q)
+        }
+    }
+
+    private func locationWarning() {
+        let device = UIDevice.current.type
+        if device.isiPhone14 {
+            UIApplication.shared.confirmAlert(
+                title: "Wallpaper Risk on iPhone 14",
+                body: "Disabling Location Services can break PosterBoard wallpapers on iPhone 14. Continue?",
+                onOK: {}, noCancel: false
             )
         }
-    }}
+    }
+}
 
 extension DaemonDef {
     func bind(on manager: DaemonsManager, applyHandler: ApplyHandler) -> Binding<Bool> {

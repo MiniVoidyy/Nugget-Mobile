@@ -25,6 +25,26 @@ struct HomeView: View {
     var body: some View {
         NavigationStack(path: $path) {
             List {
+                // MARK: Branding
+                Section {
+                    VStack(spacing: 6) {
+                        Image(systemName: "circlebadge.2")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 44, height: 44)
+                            .foregroundColor(GNTheme.gold)
+                        Text("Golden Nugget")
+                            .font(.system(size: 28, weight: .bold))
+                            .foregroundColor(GNTheme.goldBright)
+                        Text("Sparserestore Tweaks for iOS")
+                            .font(.system(size: 13))
+                            .foregroundColor(GNTheme.secondaryText)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 8)
+                    .listRowBackground(Color.clear)
+                }
+                
                 // MARK: App Version
                 Section {
                     
@@ -41,7 +61,7 @@ struct HomeView: View {
                             Button("Apply Tweaks") {
                                 applyChanges(reverting: false)
                             }
-                            .buttonStyle(TintedButton(color: .blue, fullwidth: true))
+                            .buttonStyle(TintedButton(color: GNTheme.gold, fullwidth: true))
                             Button {
                                 UIApplication.shared.alert(title: NSLocalizedString("Info", comment: "info header"), body: NSLocalizedString("Applies all selected tweaks.", comment: "apply tweaks info"))
                             } label: {
