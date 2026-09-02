@@ -104,9 +104,7 @@ struct DaemonsView: View {
                     )
                 )
 
-                if let rec = recommendedRow() {
-                    rec
-                }
+                recommendedRow()
 
                 GNSectionHeader(title: "Analytics, Data Tracking & Logging")
                 GNSwitchRow(
@@ -166,8 +164,7 @@ struct DaemonsView: View {
                 )
             )
         }
-    }
-}
+    }}
 
 extension DaemonDef {
     func bind(on manager: DaemonsManager, applyHandler: ApplyHandler) -> Binding<Bool> {
