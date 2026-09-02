@@ -172,7 +172,7 @@ struct HomeView: View {
                 }
                 startMinimuxer()
             }
-            .navigationTitle("Nugget")
+            .navigationTitle("Golden Nugget")
             .navigationDestination(for: String.self) { view in
                 if view == "ApplyChanges" {
                     LogView(resetting: false, autoReboot: autoReboot, skipSetup: skipSetup)
