@@ -99,14 +99,14 @@ struct DaemonsView: View {
 
     @ViewBuilder
     private var searchResults: some View {
-        if searchResults.isEmpty {
+        if matchingDaemons.isEmpty {
             Text("No daemons match “\(search)”")
                 .font(.system(size: 15))
                 .foregroundColor(GNTheme.secondaryText)
                 .frame(maxWidth: .infinity, alignment: .center)
                 .padding(.top, 40)
         } else {
-            ForEach(searchResults) { daemon in
+            ForEach(matchingDaemons) { daemon in
                 daemonRow(daemon)
             }
         }
@@ -182,7 +182,7 @@ struct DaemonsView: View {
         daemon.title.lowercased().contains("screen time")
     }
 
-    private var searchResults: [DaemonDef] {
+    private var matchingDaemons: [DaemonDef] {
         let q = search.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
         guard !q.isEmpty else { return [] }
         return manager.catalog.daemons.filter {
