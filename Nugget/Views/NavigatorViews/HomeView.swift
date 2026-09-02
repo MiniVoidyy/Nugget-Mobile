@@ -52,6 +52,31 @@ struct HomeView: View {
                     Label("Version \(Bundle.main.releaseVersionNumber ?? "UNKNOWN") (\(Int(buildNumber) != 0 ? "beta \(buildNumber)" : NSLocalizedString("Release", comment:"")))", systemImage: "info")
                 }
                 .listStyle(InsetGroupedListStyle())
+
+                // MARK: Daemons Status
+                Section {
+                    HStack {
+                        Image(systemName: "gearshape.2.fill")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 24, height: 24)
+                            .foregroundColor(GNTheme.gold)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Daemons Disabled")
+                                .fontWeight(.semibold)
+                            Text("\(DaemonsManager.shared.disabledDaemonCount) of \(DaemonsManager.shared.catalog.daemons.count) disabled")
+                                .font(.footnote)
+                                .foregroundColor(.secondary)
+                        }
+                        Spacer()
+                        if DaemonsManager.shared.masterEnabled {
+                            Image(systemName: "checkmark.circle.fill")
+                                .foregroundColor(GNTheme.toggleOn)
+                        }
+                    }
+                } header: {
+                    Label("Daemon Guard", systemImage: "shield")
+                }
                 
                 // MARK: Tweak Options
                 Section {
