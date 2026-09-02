@@ -48,6 +48,22 @@ struct DaemonsView: View {
             )
         )
 
+        HStack {
+            Image(systemName: "checkmark.circle.fill")
+                .foregroundColor(GNTheme.gold)
+            Text("\(manager.enabledLabels.count) of \(manager.catalog.daemons.count) disabled")
+                .font(.system(size: 13))
+                .foregroundColor(GNTheme.secondaryText)
+            Spacer()
+            if masterEnabled {
+                Text("Modifications active")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundColor(GNTheme.toggleOn)
+            }
+        }
+        .padding(.horizontal, 4)
+        .padding(.top, 2)
+
         if !manager.recommendedDaemons().isEmpty {
             GNSwitchRow(
                 title: "Recommended",
@@ -201,17 +217,5 @@ struct DaemonsView: View {
                 onOK: {}, noCancel: false
             )
         }
-    }
-}
-
-extension DaemonDef {
-    func bind(on manager: DaemonsManager, applyHandler: ApplyHandler) -> Binding<Bool> {
-        Binding(
-            get: { manager.isOn(self) },
-            set: { on in
-                manager.setEnabled(self, on)
-                if on { applyHandler.setTweakEnabled(.Daemons, isEnabled: true) }
-            }
-        )
     }
 }
