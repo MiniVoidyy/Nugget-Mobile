@@ -56,10 +56,9 @@ class DaemonsManager: ObservableObject {
 
     /// Whether daemon modifications are gated on (the master switch). Persisted
     /// across launches so the enable state survives a restart.
-    @Published var masterEnabled: Bool = false {
+    @Published var masterEnabled: Bool {
         didSet {
             UserDefaults.standard.set(masterEnabled, forKey: "DaemonMasterEnabled")
-            ApplyHandler.shared.setTweakEnabled(.Daemons, isEnabled: masterEnabled)
         }
     }
 
